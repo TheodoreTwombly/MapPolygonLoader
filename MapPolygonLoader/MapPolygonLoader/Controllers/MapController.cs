@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MapPolygonLoader.Controllers
 {
-    public class GetPolygonController : Controller
+    public class MapController : Controller
     {
         public IActionResult Index()
         {
