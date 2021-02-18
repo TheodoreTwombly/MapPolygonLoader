@@ -1,0 +1,21 @@
+﻿@model MapPolygonLoader.ViewModels.UserInputParameters
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+@{
+}
+
+<form asp-controller="Map" asp-action="GetUserPolygonPoints" method="post">
+    <div class="form-group">
+        <label asp-for="Address">Address</label>
+        <input asp-for="Address" />
+    </div>
+    <div class="form-group">
+        <label asp-for="FrequencyOfPoints">Frequency of points</label>
+        <input asp-for="FrequencyOfPoints" type="number" min="1" max="10">
+    </div>
+    <div class="form-group">
+        <label asp-for="FileName">Name of output name</label>
+        <input asp-for="FileName" />
+    </div>
+    <input type="submit" value="Search" />
+</form>
