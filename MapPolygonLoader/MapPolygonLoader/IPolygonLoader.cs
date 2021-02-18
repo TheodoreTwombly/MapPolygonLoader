@@ -8,6 +8,6 @@ namespace MapPolygonLoader
 {
     public interface IPolygonLoader
     {
-        Polygon GetPolygonPoints(string address, int frequencyOfPoints);
+        public Task<Polygon> GetPolygonPoints(string address, int frequencyOfPoints);
     }
 }
