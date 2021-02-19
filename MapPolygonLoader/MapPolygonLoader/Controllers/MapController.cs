@@ -33,8 +33,8 @@ namespace MapPolygonLoader.Controllers
 
         public FileStreamResult CreateFile(Polygon polygon, string fileName)
         {
-            var points = polygon.Points.Select(p => p.Latitude + " " + p.Longitude);
-            var stream = new MemoryStream(Encoding.ASCII.GetBytes(polygon.Name + "/n" + string.Join("/n", points)));
+            var points = polygon.Points.Select(p => "[" + p.Latitude + "," + p.Longitude + "]");
+            var stream = new MemoryStream(Encoding.UTF8.GetBytes(polygon.Name + "\n" + string.Join("\n", points)));
             return new FileStreamResult(stream, new MediaTypeHeaderValue("text/plain"))
             {
                 FileDownloadName = fileName + ".txt"

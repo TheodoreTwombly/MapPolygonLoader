@@ -23,16 +23,30 @@ namespace MapPolygonLoader
 
                 var polygon = new Polygon() { Name = firstResult.DisplayName, Points = new List<Point>() };
 
-                foreach( var coordinates in firstResult.Geojson.Coordinates)
-                    foreach (var polygonCoordinates in coordinates.PolygonCoordinates)
-                        for(int i = 0; i < polygonCoordinates.PointsCoordinates.Count(); i += frequencyOfPoints)
-                        {
-                            polygon.Points.Add(new Point()
+                if(firstResult.Geojson.Coordinates.Count() > 1)
+                {
+                    foreach (var coordinates in firstResult.Geojson.Coordinates)
+                        foreach (var polygonCoordinates in coordinates.PolygonCoordinates)
+                            for (int i = 0; i < polygonCoordinates.PointsCoordinates.Count(); i += frequencyOfPoints)
                             {
-                                Longitude = polygonCoordinates.PointsCoordinates[i].Point[0],
-                                Latitude = polygonCoordinates.PointsCoordinates[i].Point[1]
-                            });
-                        }
+                                polygon.Points.Add(new Point()
+                                {
+                                    Longitude = polygonCoordinates.PointsCoordinates[i].Point[0],
+                                    Latitude = polygonCoordinates.PointsCoordinates[i].Point[1]
+                                });
+                            }
+                }
+                else
+                {
+                    for (int i = 0; i < firstResult.Geojson.Coordinates[0].PolygonCoordinates.Count(); i += frequencyOfPoints)
+                    {
+                        polygon.Points.Add(new Point()
+                        {
+                            Longitude = (double)firstResult.Geojson.Coordinates[0].PolygonCoordinates[i].PointsCoordinates[0].Double,
+                            Latitude = (double)firstResult.Geojson.Coordinates[0].PolygonCoordinates[i].PointsCoordinates[1].Double
+                        });
+                    }            
+                }
 
                 return polygon;
 
