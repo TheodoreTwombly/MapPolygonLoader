@@ -1,12 +1,9 @@
 ﻿using MapPolygonLoader.Models;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using RestSharp;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using NominatimConverter;
 
 namespace MapPolygonLoader
 {
@@ -21,33 +18,27 @@ namespace MapPolygonLoader
 
             if (response.IsSuccessful)
             {
-                var content = JsonConvert.DeserializeObject<JToken>(response.Content);
+                var nominatimResponse = NominatimResponse.FromJson(response.Content);
+                var firstResult = nominatimResponse[0];
 
+                var polygon = new Polygon() { Name = firstResult.DisplayName, Points = new List<Point>() };
 
-                IList<JToken> results = content[0]["geojson"]["coordinates"].Children().ToList();
-                string name = content[0]["display_name"].Value<string>();
+                foreach( var coordinates in firstResult.Geojson.Coordinates)
+                    foreach (var polygonCoordinates in coordinates.PolygonCoordinates)
+                        for(int i = 0; i < polygonCoordinates.PointsCoordinates.Count(); i += frequencyOfPoints)
+                        {
+                            polygon.Points.Add(new Point()
+                            {
+                                Longitude = polygonCoordinates.PointsCoordinates[i].Point[0],
+                                Latitude = polygonCoordinates.PointsCoordinates[i].Point[1]
+                            });
+                        }
 
-
-                //IList<SearchResult> searchResults = new List<SearchResult>();
-
-                //foreach (JToken result in results)
-                //{
-                //    SearchResult searchResult = result.ToObject<SearchResult>();
-                //    searchResults.Add(searchResult);
-                //}
-
-                //Get the league caption
-                //var leagueCaption = content["leagueCaption"].Value<string>();
-                ;
+                return polygon;
 
             }
-
-            //TODO: log error, throw exception or do other stuffs for failed requests here.
-            Console.WriteLine(response.Content);
-
             return null;
 
-            //return new Polygon();
         }
     }
 }

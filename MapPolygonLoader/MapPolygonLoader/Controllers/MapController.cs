@@ -1,9 +1,10 @@
 ﻿using MapPolygonLoader.Models;
 using MapPolygonLoader.ViewModels;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
+using Microsoft.Net.Http.Headers;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace MapPolygonLoader.Controllers
@@ -25,9 +26,19 @@ namespace MapPolygonLoader.Controllers
         [HttpPost]
         public async Task<IActionResult> GetUserPolygonPoints(UserInputParameters model)
         {
-            Polygon result = await _polygonLoader.GetPolygonPoints(model.Address, model.FrequencyOfPoints);
+            var polygon = await _polygonLoader.GetPolygonPoints(model.Address, model.FrequencyOfPoints);
 
-            return RedirectToAction("Index");
+            return CreateFile(polygon, model.FileName);
+        }
+
+        public FileStreamResult CreateFile(Polygon polygon, string fileName)
+        {
+            var points = polygon.Points.Select(p => p.Latitude + " " + p.Longitude);
+            var stream = new MemoryStream(Encoding.ASCII.GetBytes(polygon.Name + "/n" + string.Join("/n", points)));
+            return new FileStreamResult(stream, new MediaTypeHeaderValue("text/plain"))
+            {
+                FileDownloadName = fileName + ".txt"
+            };
         }
     }
 }
