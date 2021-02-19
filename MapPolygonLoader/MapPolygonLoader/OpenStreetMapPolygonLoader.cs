@@ -52,7 +52,6 @@ namespace MapPolygonLoader
 
             }
             return null;
-
         }
     }
 }

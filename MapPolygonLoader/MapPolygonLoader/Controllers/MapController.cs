@@ -2,6 +2,7 @@
 using MapPolygonLoader.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Net.Http.Headers;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -26,8 +27,16 @@ namespace MapPolygonLoader.Controllers
         [HttpPost]
         public async Task<IActionResult> GetUserPolygonPoints(UserInputParameters model)
         {
-            var polygon = await _polygonLoader.GetPolygonPoints(model.Address, model.FrequencyOfPoints);
+            Polygon polygon = await _polygonLoader.GetPolygonPoints(model.Address, model.FrequencyOfPoints);
 
+            if (polygon == null)
+            {
+                polygon = new Polygon()
+                {
+                    Name = "Not found...",
+                    Points = new List<Point>()
+                };
+            }
             return CreateFile(polygon, model.FileName);
         }
 
